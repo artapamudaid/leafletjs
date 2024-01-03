@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <title>Leaflet Geolocation Example</title>
+    <style>
+        #map { height: 400px; }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    var map = L.map('map').setView([0, 0], 16);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    var userLocationMarker;
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var userLatLng = L.latLng(position.coords.latitude, position.coords.longitude);
+            userLocationMarker = L.marker(userLatLng).addTo(map);
+            map.setView(userLatLng, 16);
+
+            // Contoh lokasi dan radius lingkaran
+            var center = [-7.818530, 112.048060]; // Ganti dengan koordinat lokasi yang diinginkan
+            var radius = 100; // Ganti dengan radius dalam meter
+
+            // Tambahkan lingkaran pada peta dengan radius tertentu
+            var circle = L.circle(center, {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: radius
+            }).addTo(map);
+
+            // Periksa apakah userLatLng berada dalam radius lingkaran
+            if (userLatLng.distanceTo(circle.getLatLng()) <= radius) {
+                alert("Posisi pengguna berada dalam radius lingkaran.");
+            } else {
+                alert("Posisi pengguna berada di luar radius lingkaran.");
+            }
+        }, function(error) {
+            console.error(error.message);
+            alert("Tidak dapat menemukan lokasi Anda. Pastikan layanan lokasi diaktifkan.");
+        });
+    } else {
+        alert("Geolokasi tidak didukung pada peramban ini.");
+    }
+</script>
+
+</body>
+</html>
